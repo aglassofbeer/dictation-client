@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chinese Dictation App</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+    textarea { width: 100%; height: 80px; }
+    .result { margin-top: 1em; }
+    audio { width: 100%; margin-top: 0.5em; }
+  </style>
+</head>
+<body>
+  <h1>中文听写！</h1>
+    <button id="btnGen">問題生成</button>
+  <div id="questionArea" style="display:none;">
+    <h3>聞き取り</h3>
+    <audio id="audio" controls></audio>
+    <textarea id="answer" placeholder="聞き取った中国語を入力"></textarea>
+    <button id="btnSubmit">回答提出</button>
+  </div>
+  <div id="result" class="result"></div>
+  <script>
+    const btnGen = document.getElementById("btnGen");
+    const btnSubmit = document.getElementById("btnSubmit");
+    const topicInput = document.getElementById("topic");
+    const audioElm = document.getElementById("audio");
+    const answerElm = document.getElementById("answer");
+    const questionArea = document.getElementById("questionArea");
+    const resultElm = document.getElementById("result");
+
+    let correctText = "";
+
+    btnGen.addEventListener("click", async () => {
+      resultElm.textContent = "";
+      answerElm.value = "";
+            const res = await fetch("https://dictation-server.onrender.com/generate-question", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      correctText = data.text;
+      audioElm.src = `https://dictation-server.onrender.com${data.audioUrl}`;
+      questionArea.style.display = "block";
+    });
+
+    btnSubmit.addEventListener("click", async () => {
+      const userAnswer = answerElm.value.trim();
+      if (!userAnswer) return alert("回答を入力してください");
+      const res = await fetch("https://dictation-server.onrender.com/evaluate-answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correctText, userAnswer }),
+      });
+      const data = await res.json();
+      resultElm.innerHTML = `
+                <p><strong>正解:</strong> ${correctText}</p>
+<p><strong>ピンイン:</strong> ${data.pinyin || '（ピンイン未取得）'}</p>
+        <p><strong>点数:</strong> ${data.score} 点</p>
+        <p><strong>添削:</strong> ${data.suggestion}</p>
+        <p><strong>コメント:</strong> ${data.comment}</p>
+        <p><strong>重要語句・表現:</strong><ul>${Array.isArray(data.notes?.['关键词']) && data.notes['关键词'].length > 0
+          ? data.notes['关键词'].map(n => `<li><strong>${n.word}</strong>：${n.explanation}</li>`).join('')
+          : '<li>（重要語句はありません）</li>'}</ul></p>`;
+    });
+  </script>
+</body>
+</html>
