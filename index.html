@@ -81,36 +81,33 @@
     };
 
     // 言語選択変更時にレベルメニュー更新
-    langSelect.addEventListener("change", () => {
-      const lang = langSelect.value;
-      levelSelect.innerHTML = ""; // 一旦クリア
-    
-      levelOptions[lang].forEach(option => {
-        const opt = document.createElement("option");
-        opt.value = option.value;
-        opt.textContent = option.label;
-        levelSelect.appendChild(opt);
-      });
-    });
-
-    let correctText = "";
-    // 言語選択でラベル変更
-    langSelect.addEventListener("change", () => {
+        langSelect.addEventListener("change", () => {
+        const lang = langSelect.value;
       
-      if (lang === "zh") {
-        titleElem.textContent = "中文听写";
-        btnGen.textContent = "問題生成";
-        btnSubmit.textContent = "回答提出";
-        questionTitle.textContent = "聞き取り";
-        answerElm.placeholder = "聞き取った中国語を入力";
-      } else if (lang === "en") {
-        titleElem.textContent = "English Dictation";
-        btnGen.textContent = "Generate";
-        btnSubmit.textContent = "Submit Answer";
-        questionTitle.textContent = "Listening";
-        answerElm.placeholder = "Type what you hear";
-      }
-    });
+        // レベル選択肢の更新
+        levelSelect.innerHTML = "";
+        levelOptions[lang].forEach(option => {
+          const opt = document.createElement("option");
+          opt.value = option.value;
+          opt.textContent = option.label;
+          levelSelect.appendChild(opt);
+        });
+      
+        // UI表示のラベル変更
+        if (lang === "zh") {
+          titleElem.textContent = "中文听写";
+          btnGen.textContent = "問題生成";
+          btnSubmit.textContent = "回答提出";
+          questionTitle.textContent = "聞き取り";
+          answerElm.placeholder = "聞き取った中国語を入力";
+        } else if (lang === "en") {
+          titleElem.textContent = "English Dictation";
+          btnGen.textContent = "Generate";
+          btnSubmit.textContent = "Submit Answer";
+          questionTitle.textContent = "Listening";
+          answerElm.placeholder = "Type what you hear";
+        }
+      });
     
     // 初期表示反映
     langSelect.dispatchEvent(new Event("change"));
