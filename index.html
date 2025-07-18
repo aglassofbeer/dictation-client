@@ -120,15 +120,17 @@
         body: JSON.stringify({ correctText, userAnswer, lang }),
       });
       const data = await res.json();
+      
       resultElm.innerHTML = `
       <p><strong>正解:</strong> ${correctText}</p>
-      <p><strong>ピンイン:</strong> ${data.pinyin || '（ピンイン未取得）'}</p>
-        <p><strong>点数:</strong> ${data.score} 点</p>
-        <p><strong>添削:</strong> ${data.suggestion}</p>
-        <p><strong>コメント:</strong> ${data.comment}</p>
-        <p><strong>重要語句・表現:</strong><ul>${Array.isArray(data.notes?.['关键词']) && data.notes['关键词'].length > 0
-          ? data.notes['关键词'].map(n => `<li><strong>${n.word}</strong>：${n.explanation}</li>`).join('')
-          : '<li>（重要語句はありません）</li>'}</ul></p>`;
+      <p><strong>ピンイン:</strong> ${data.pinyin || data.phonetic || '（なし）'}</p>
+      <p><strong>点数:</strong> ${data.score} 点</p>
+      <p><strong>コメント:</strong> ${data.comment}</p>
+      <p><strong>重要語句・表現:</strong><ul>${
+        notes.length > 0
+          ? notes.map(n => `<li><strong>${n.word}</strong>：${n.explanation}</li>`).join('')
+          : '<li>（重要語句はありません）</li>'
+      }</ul></p>`;
 
     // スピナーを元に戻す
     btnSubmit.disabled = false;
