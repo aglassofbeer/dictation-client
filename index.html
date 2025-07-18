@@ -112,7 +112,6 @@
       btnSubmit.innerHTML = `<span class="spinner"></span>送信中...`;
 
       const lang = langSelect.value;
-      const notes = Array.isArray(data.notes) ? data.notes : [];
       const userAnswer = answerElm.value.trim();
       if (!userAnswer) return alert("回答を入力してください");
       const res = await fetch("https://dictation-server.onrender.com/evaluate-answer", {
@@ -121,6 +120,7 @@
         body: JSON.stringify({ correctText, userAnswer, lang }),
       });
       const data = await res.json();
+      const notes = Array.isArray(data.notes) ? data.notes : [];
       
       resultElm.innerHTML = `
       <p><strong>正解:</strong> ${correctText}</p>
