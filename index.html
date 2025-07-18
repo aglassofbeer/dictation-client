@@ -113,7 +113,7 @@
 
       const lang = langSelect.value;
       const userAnswer = answerElm.value.trim();
-      if (!userAnswer) return alert("回答を入力してください");
+     // if (!userAnswer) return alert("回答を入力してください");
       const res = await fetch("https://dictation-server.onrender.com/evaluate-answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
