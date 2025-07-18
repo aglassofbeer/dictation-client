@@ -51,6 +51,12 @@
     let correctText = "";
 
     btnGen.addEventListener("click", async () => {
+
+        // 送信ボタンを無効化してスピナー表示
+        btnGen.disabled = true;
+        const originalGenText = btnGen.textContent;
+        btnGen.innerHTML = `<span class="spinner"></span>問題生成中...`;
+
       resultElm.textContent = "";
       answerElm.value = "";
             const res = await fetch("https://dictation-server.onrender.com/generate-question", {
@@ -62,6 +68,10 @@
       correctText = data.text;
       audioElm.src = `https://dictation-server.onrender.com${data.audioUrl}`;
       questionArea.style.display = "block";
+
+      // スピナーを元に戻す
+      btnGen.disabled = false;
+      btnGen.innerHTML = originalGenText;      
     });
 
     btnSubmit.addEventListener("click", async () => {
