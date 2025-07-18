@@ -36,6 +36,14 @@
         <option value="zh" selected>中文</option>
         <option value="en">English</option>
       </select>
+
+    <label for="levelSelect">レベル選択:</label>
+      <select id="levelSelect">
+        <!-- 初期状態は中国語 -->
+        <option value="中検1級">中検1級（CEFR C1 / HSK6+）</option>
+        <option value="中検準1級">中検準1級（CEFR B2 / HSK6）</option>
+        <option value="中検2級">中検2級（CEFR B1 / HSK5）</option>
+      </select>
       
     <button id="btnGen">問題生成</button>
   <div id="questionArea" style="display:none;">
@@ -55,11 +63,38 @@
     const resultElm = document.getElementById("result");
     const titleElem = document.getElementById("title");
     const questionTitle = document.querySelector("#questionArea h3");
+    const lang = langSelect.value;
+    const levelSelect = document.getElementById("levelSelect");
+    const levelOptions = {
+      zh: [
+        { value: "中検1級", label: "中検1級（CEFR C1 / HSK6+）" },
+        { value: "中検準1級", label: "中検準1級（CEFR B2 / HSK6）" },
+        { value: "中検2級", label: "中検2級（CEFR B1 / HSK5）" }
+      ],
+      en: [
+        { value: "Eiken 1", label: "英検1級（CEFR C1）" },
+        { value: "Eiken Pre-1", label: "英検準1級（CEFR B2）" },
+        { value: "Eiken 2", label: "英検2級（CEFR B1）" }
+      ]
+    };
+
+    // 言語選択変更時にレベルメニュー更新
+    langSelect.addEventListener("change", () => {
+      const lang = langSelect.value;
+      levelSelect.innerHTML = ""; // 一旦クリア
+    
+      levelOptions[lang].forEach(option => {
+        const opt = document.createElement("option");
+        opt.value = option.value;
+        opt.textContent = option.label;
+        levelSelect.appendChild(opt);
+      });
+    });
 
     let correctText = "";
     // 言語選択でラベル変更
     langSelect.addEventListener("change", () => {
-      const lang = langSelect.value;
+      
       if (lang === "zh") {
         titleElem.textContent = "中文听写";
         btnGen.textContent = "問題生成";
