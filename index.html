@@ -86,10 +86,11 @@
       resultElm.textContent = "";
       answerElm.value = "";
       const lang = langSelect.value;
+      const level = lang === "en" ? "Eiken Pre-1" : "HSK6";
       const res = await fetch("https://dictation-server.onrender.com/generate-question", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lang }),
+        body: JSON.stringify({ lang, level }),
       });
       const data = await res.json();
       correctText = data.text;
@@ -113,7 +114,7 @@
       const res = await fetch("https://dictation-server.onrender.com/evaluate-answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ correctText, userAnswer }),
+        body: JSON.stringify({ correctText, userAnswer, lang }),
       });
       const data = await res.json();
       resultElm.innerHTML = `
