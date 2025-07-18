@@ -53,6 +53,8 @@
     const answerElm = document.getElementById("answer");
     const questionArea = document.getElementById("questionArea");
     const resultElm = document.getElementById("result");
+    const titleElem = document.getElementById("title");
+    const questionTitle = document.querySelector("#questionArea h3");
 
     let correctText = "";
     // 言語選択でラベル変更
@@ -108,7 +110,8 @@
       btnSubmit.disabled = true;
       const originalText = btnSubmit.textContent;
       btnSubmit.innerHTML = `<span class="spinner"></span>送信中...`;
-      
+
+      const lang = langSelect.value;
       const userAnswer = answerElm.value.trim();
       if (!userAnswer) return alert("回答を入力してください");
       const res = await fetch("https://dictation-server.onrender.com/evaluate-answer", {
