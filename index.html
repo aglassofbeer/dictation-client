@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chinese Dictation App</title>
+  <title> Dictation App</title>
   <style>
     body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
     textarea { width: 100%; height: 80px; }
@@ -30,12 +30,18 @@
   </style>
 </head>
 <body>
-  <h1>中文听写</h1>
+  <h1>Dictation</h1>
+    <label for="langSelect">言語選択:</label>
+      <select id="langSelect">
+        <option value="zh" selected>中文</option>
+        <option value="en">English</option>
+      </select>
+      
     <button id="btnGen">問題生成</button>
   <div id="questionArea" style="display:none;">
     <h3>聞き取り</h3>
     <audio id="audio" controls></audio>
-    <textarea id="answer" placeholder="聞き取った中国語を入力"></textarea>
+    <textarea id="answer" placeholder="聞き取った内容を入力"></textarea>
     <button id="btnSubmit">回答提出</button>
   </div>
   <div id="result" class="result"></div>
@@ -49,7 +55,27 @@
     const resultElm = document.getElementById("result");
 
     let correctText = "";
-
+    // 言語選択でラベル変更
+    langSelect.addEventListener("change", () => {
+      const lang = langSelect.value;
+      if (lang === "zh") {
+        titleElem.textContent = "中文听写";
+        btnGen.textContent = "問題生成";
+        btnSubmit.textContent = "回答提出";
+        questionTitle.textContent = "聞き取り";
+        answerElm.placeholder = "聞き取った中国語を入力";
+      } else if (lang === "en") {
+        titleElem.textContent = "English Dictation";
+        btnGen.textContent = "Generate";
+        btnSubmit.textContent = "Submit Answer";
+        questionTitle.textContent = "Listening";
+        answerElm.placeholder = "Type what you hear";
+      }
+    });
+    
+    // 初期表示反映
+    langSelect.dispatchEvent(new Event("change"));
+    
     btnGen.addEventListener("click", async () => {
 
         // 送信ボタンを無効化してスピナー表示
@@ -59,10 +85,11 @@
 
       resultElm.textContent = "";
       answerElm.value = "";
-            const res = await fetch("https://dictation-server.onrender.com/generate-question", {
+      const lang = langSelect.value;
+      const res = await fetch("https://dictation-server.onrender.com/generate-question", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ lang }),
       });
       const data = await res.json();
       correctText = data.text;
