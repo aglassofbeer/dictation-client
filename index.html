@@ -9,6 +9,24 @@
     textarea { width: 100%; height: 80px; }
     .result { margin-top: 1em; }
     audio { width: 100%; margin-top: 0.5em; }
+
+    .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-top: 2px solid #333;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
   </style>
 </head>
 <body>
@@ -47,6 +65,12 @@
     });
 
     btnSubmit.addEventListener("click", async () => {
+
+      // 送信ボタンを無効化してスピナー表示
+      btnSubmit.disabled = true;
+      const originalText = btnSubmit.textContent;
+      btnSubmit.innerHTML = `<span class="spinner"></span>送信中...`;
+      
       const userAnswer = answerElm.value.trim();
       if (!userAnswer) return alert("回答を入力してください");
       const res = await fetch("https://dictation-server.onrender.com/evaluate-answer", {
@@ -56,14 +80,19 @@
       });
       const data = await res.json();
       resultElm.innerHTML = `
-                <p><strong>正解:</strong> ${correctText}</p>
-<p><strong>ピンイン:</strong> ${data.pinyin || '（ピンイン未取得）'}</p>
+      <p><strong>正解:</strong> ${correctText}</p>
+      <p><strong>ピンイン:</strong> ${data.pinyin || '（ピンイン未取得）'}</p>
         <p><strong>点数:</strong> ${data.score} 点</p>
         <p><strong>添削:</strong> ${data.suggestion}</p>
         <p><strong>コメント:</strong> ${data.comment}</p>
         <p><strong>重要語句・表現:</strong><ul>${Array.isArray(data.notes?.['关键词']) && data.notes['关键词'].length > 0
           ? data.notes['关键词'].map(n => `<li><strong>${n.word}</strong>：${n.explanation}</li>`).join('')
           : '<li>（重要語句はありません）</li>'}</ul></p>`;
+
+    // スピナーを元に戻す
+    btnSubmit.disabled = false;
+    btnSubmit.innerHTML = originalText;
+      
     });
   </script>
 </body>
