@@ -31,7 +31,7 @@
 </head>
 <body>
   <h1 id="title">Dictation</h1>
-    <label for="langS!elect">言語選択:</label>
+    <label for="langSelect">言語選択:</label>
       <select id="langSelect">
         <option value="zh" selected>中文</option>
         <option value="en">English</option>
@@ -48,7 +48,7 @@
       
     <button id="btnGen">問題生成</button>
   <div id="questionArea" style="display:none;">
-    <h3>聞き取り</h3>
+    <h3 id="questionTitle">聞き取り</h3>
     <audio id="audio" controls></audio>
     <textarea id="answer" placeholder="聞き取った内容を入力"></textarea>
     <button id="btnSubmit">回答提出</button>
@@ -62,10 +62,10 @@
     const answerElm = document.getElementById("answer");
     const questionArea = document.getElementById("questionArea");
     const resultElm = document.getElementById("result");
-    const titleElem = document.getElementById("title");
-    const questionTitle = document.querySelector("#questionArea h3");
-    const lang = langSelect.value;
+    const langSelect    = document.getElementById("langSelect");
     const levelSelect = document.getElementById("levelSelect");
+    const titleElem     = document.getElementById("title");
+    const questionTitle = document.getElementById("questionTitle");
     const levelOptions = {
       zh: [
         { value: "中検1級（CEFR C1 / HSK6+）", label: "中検1級（CEFR C1 / HSK6+）" },
