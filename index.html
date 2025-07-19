@@ -49,7 +49,7 @@
     <button id="btnGen">問題生成</button>
   <div id="questionArea" style="display:none;">
     <h3 id="questionTitle">聞き取り</h3>
-    <audio id="audio" controls></audio>
+    <audio id="audio" preload="auto" controls></audio>
     <textarea id="answer" placeholder="聞き取った内容を入力"></textarea>
     <button id="btnSubmit">回答提出</button>
   </div>
@@ -137,6 +137,8 @@
       const data = await res.json();
       correctText = data.text;
       audioElm.src = `https://dictation-server.onrender.com${data.audioUrl}`;
+      audioElm.preload = "auto";
+      audioElm.load();
       questionArea.style.display = "block";
 
       // スピナーを元に戻す
