@@ -136,7 +136,7 @@
       });
       const data = await res.json();
       correctText = data.text;
-      audioElm.src = `https://dictation-server.onrender.com${data.audioUrl}`;
+      audioElm.src = data.audioUrl;
       audioElm.preload = "auto";
       audioElm.load();
       questionArea.style.display = "block";
