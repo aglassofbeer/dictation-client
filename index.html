@@ -222,6 +222,33 @@
     reviewDatesElm.innerHTML = "<p>日付一覧の取得に失敗しました。</p>";
   }
 });
+
+  // 特定日付の履歴を読み込む関数
+  async function loadReviewByDate(date) {
+  reviewListElm.innerHTML = `<h3>${date} の学習履歴</h3><p>読み込み中...</p>`;
+
+  try {
+    const res = await fetch(`https://dictation-server.onrender.com/review-by-date?date=${date}`);
+    const data = await res.json();   // [{text, audio_url, pinyin, translation_ja, ...}, ...]
+    if (!Array.isArray(data) || data.length === 0) {
+      reviewListElm.innerHTML = `<h3>${date} の学習履歴</h3><p>データなし</p>`;
+      return;
+    }
+
+    // 一覧描画
+    const parts = data.map(item => `
+      <hr>
+      <audio controls preload="auto" src="${item.audio_url}"></audio>
+      <p><strong>正解:</strong> ${item.text}</p>
+      <p><strong>発音:</strong> ${item.pinyin || "（未保存）"}</p>
+      <p><strong>日本語訳:</strong> ${item.translation_ja || "（未保存）"}</p>
+    `);
+    reviewListElm.innerHTML = `<h3>${date} の学習履歴</h3>${parts.join("")}`;
+  } catch (e) {
+    console.error(e);
+    reviewListElm.innerHTML = `<h3>${date} の学習履歴</h3><p>読み込みに失敗しました。</p>`;
+  }
+}
   </script>
 </body>
 </html>
