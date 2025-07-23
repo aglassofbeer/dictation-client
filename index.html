@@ -54,6 +54,11 @@
     <button id="btnSubmit">回答提出</button>
   </div>
   <div id="result" class="result"></div>
+
+  <button id="btnReview">復習</button>
+  <div id="reviewDates" style="margin-top:1em;"></div>
+  <div id="reviewList" style="margin-top:1em;"></div>
+
   <script>
     const btnGen = document.getElementById("btnGen");
     const btnSubmit = document.getElementById("btnSubmit");
@@ -80,7 +85,10 @@
          { value: "英検3級（CEFR A2）", label: "英検3級（CEFR A2）" }
       ]
     };
-
+    let correctText = "";  
+    const reviewDatesElm = document.getElementById("reviewDates");
+    const reviewListElm  = document.getElementById("reviewList");
+    const btnReview      = document.getElementById("btnReview");
     // 言語選択変更時にレベルメニュー更新
         langSelect.addEventListener("change", () => {
         const lang = langSelect.value;
@@ -181,6 +189,39 @@
     btnSubmit.innerHTML = originalText;
       
     });
+
+  // 復習ボタンのクリック処理
+  btnReview.addEventListener("click", async () => {
+  // UI初期化
+  reviewListElm.innerHTML = "";
+  reviewDatesElm.innerHTML = "<p>読み込み中...</p>";
+
+  try {
+    const res = await fetch("https://dictation-server.onrender.com/review-dates");
+    const dates = await res.json();            // [{ date: "2025-07-21" }, ...] 想定
+    if (!Array.isArray(dates) || dates.length === 0) {
+      reviewDatesElm.innerHTML = "<p>履歴がありません。</p>";
+      return;
+    }
+
+    // 日付リンクを並べる
+    reviewDatesElm.innerHTML = "<h3>復習日一覧</h3>";
+    dates.forEach(({ date }) => {
+      const a = document.createElement("a");
+      a.href = "#";
+      a.textContent = date;
+      a.style.display = "block";
+      a.onclick = (e) => {
+        e.preventDefault();
+        loadReviewByDate(date);
+      };
+      reviewDatesElm.appendChild(a);
+    });
+  } catch (e) {
+    console.error(e);
+    reviewDatesElm.innerHTML = "<p>日付一覧の取得に失敗しました。</p>";
+  }
+});
   </script>
 </body>
 </html>
