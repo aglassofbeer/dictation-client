@@ -86,6 +86,7 @@
       ]
     };
     let correctText = "";  
+    let currentAudioUrl = ""; 
     const reviewDatesElm = document.getElementById("reviewDates");
     const reviewListElm  = document.getElementById("reviewList");
     const btnReview      = document.getElementById("btnReview");
@@ -145,6 +146,7 @@
       const data = await res.json();
       correctText = data.text;
       audioElm.src = data.audioUrl;
+      currentAudioUrl = data.audioUrl;
       audioElm.preload = "auto";
       audioElm.load();
       questionArea.style.display = "block";
@@ -167,7 +169,7 @@
       const res = await fetch("https://dictation-server.onrender.com/evaluate-answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ correctText, userAnswer, lang }),
+        body: JSON.stringify({ correctText, userAnswer, lang, audioUrl: currentAudioUrl }),
       });
       const data = await res.json();
       const notes = Array.isArray(data.notes) ? data.notes : [];
